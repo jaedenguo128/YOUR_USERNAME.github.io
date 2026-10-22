@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sea:#E6ECF6; --ink:#14203A; --muted:#4A5D80; --line:#9FB3D6; --panel:#F4F7FC;
+  --brass:#C0182F; --brass-ink:#FFFFFF; --err:#A01E2E; --ok:#1E6B4A;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --sea:#1B2A44; --ink:#F1F4FA; --muted:#A9B7D0; --line:#3F5A86; --panel:#243756;
+    --brass:#D62F46; --brass-ink:#FFFFFF; --err:#FFB4A8; --ok:#7FD8A8; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --sea:#1B2A44; --ink:#F1F4FA; --muted:#A9B7D0; --line:#3F5A86; --panel:#243756;
+  --brass:#D62F46; --brass-ink:#FFFFFF; --err:#FFB4A8; --ok:#7FD8A8; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--sea);color:var(--ink);font-family:Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;overflow-x:hidden}
+.globe{position:fixed;right:-18vmin;bottom:-18vmin;width:90vmin;height:90vmin;color:var(--line);opacity:.9;pointer-events:none}
+.globe .sea{fill:var(--panel);stroke:var(--line);stroke-width:.8}
+.globe .land{fill:var(--line);stroke:var(--line);stroke-width:.8;stroke-linejoin:round}
+.globe .grat{fill:none;stroke:var(--line);stroke-width:.4;opacity:.45}
+.globe .colony{fill:var(--brass)}
+.globe .ping{fill:none;stroke:var(--brass);stroke-width:1.5;transform-origin:center;transform-box:fill-box;animation:ping 3.2s ease-out infinite}
+@keyframes ping{0%{transform:scale(.4);opacity:1}100%{transform:scale(3);opacity:0}}
+main{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 20px;max-width:460px;margin:0 auto}
+h1{font-family:"Black Ops One",Impact,"Arial Black",sans-serif;font-weight:400;font-size:clamp(64px,18vw,104px);line-height:.95;letter-spacing:.04em;margin:0 0 8px}
+.tag{margin:0 0 28px;color:var(--muted);max-width:34ch}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:8px;margin-bottom:20px}
+.tabs button{font:inherit;font-weight:600;padding:9px;border:0;border-radius:5px;background:transparent;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--sea)}
+label{display:block;font-weight:500;font-size:14px;margin:0 0 4px}
+input{width:100%;font:inherit;color:var(--ink);background:var(--sea);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:14px}
+input::placeholder{color:var(--muted);opacity:.8}
+:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.go{width:100%;font:inherit;font-weight:600;padding:12px;border:0;border-radius:6px;background:var(--brass);color:var(--brass-ink);cursor:pointer;margin-top:4px}
+.go:hover{filter:brightness(1.08)}
+.msg{min-height:22px;margin:0 0 10px;font-size:14px;color:var(--err)}
+.msg.ok{color:var(--ok)}
+.swap{margin:16px 0 0;text-align:center;font-size:14px;color:var(--muted)}
+.swap button{font:inherit;font-weight:600;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.done{text-align:center;padding:12px 0}
+.done h2{margin:0 0 6px;font-size:22px}
+.done p{margin:0 0 16px;color:var(--muted)}
+[hidden]{display:none!important}
+#app{position:relative;min-height:100vh}
+.bar{display:flex;align-items:center;gap:20px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--sea)}
+.brand{font-family:"Black Ops One",Impact,"Arial Black",sans-serif;font-size:20px;letter-spacing:.06em}
+.nav{display:flex;gap:4px;flex:1;overflow-x:auto}
+.nav button{font:inherit;font-weight:600;padding:8px 12px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+.nav button:hover{color:var(--ink)}
+.nav button[aria-current="page"]{background:var(--ink);color:var(--sea)}
+.out{font:inherit;font-weight:600;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);cursor:pointer}
+.page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 66px);text-align:center;padding:24px}
+.page h2{font-size:clamp(28px,6vw,48px);margin:0 0 12px}
+.soon{color:var(--muted);margin:0}
+.bal{margin:8px 0 0;padding:16px 28px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.bal strong{display:block;font-size:clamp(32px,8vw,56px);line-height:1.1}
+.bal span{color:var(--muted);font-weight:500}
+.gift{margin-top:20px;padding:20px 28px;background:var(--panel);border:1px solid var(--line);border-radius:10px;width:min(360px,100%)}
+.gift h3{margin:0 0 4px;font-size:18px}
+.gift .streak{margin:0 0 12px;color:var(--muted)}
+.gift .go:disabled{opacity:.6;cursor:not-allowed;filter:none}
+.giftmsg{min-height:22px;margin:10px 0 0;font-size:14px;color:var(--ok)}
+.giftmsg.bad{color:var(--err)}
+@media (max-width:640px){.bar{flex-wrap:wrap;gap:8px}.nav{order:3;flex-basis:100%}}
+@media (prefers-reduced-motion:reduce){.globe .ping{animation:none}}
+</style>
+</head>
+<body>
+<svg class="globe" viewBox="0 0 200 200" aria-hidden="true">
+  <defs>
+    <clipPath id="clip"><circle cx="100" cy="100" r="96"/></clipPath>
+    <radialGradient id="shade" cx=".5" cy=".5" r=".5"><stop offset=".55" style="stop-color:var(--sea);stop-opacity:0"/><stop offset="1" style="stop-color:var(--sea);stop-opacity:.8"/></radialGradient>
+  </defs>
+  <circle class="sea" cx="100" cy="100" r="96"/>
+  <g clip-path="url(#clip)">
+    <path class="grat" d="M19 0V200M46 0V200M73 0V200M100 0V200M127 0V200M154 0V200M181 0V200M0 19H200M0 46H200M0 73H200M0 100H200M0 127H200M0 154H200M0 181H200"/>
+    <path class="land" d="M-12 46L-12 64L-5 71L1 79L6 82L13 86L17 87L23 91L28 93L30 93L25 91L21 86L22 81L19 81L13 80L13 76L19 74L24 73L26 77L28 78L27 72L32 69L33 64L37 62L41 60L46 59L50 53L46 51L42 46L37 44L28 37L10 35L-8 37Z
+M50 46L60 46L82 37L80 28L60 25L42 28L37 32L48 39Z
+M30 93L35 89L44 91L53 96L55 100L69 105L67 111L64 120L57 123L52 131L48 134L42 138L39 147L35 149L32 142L34 134L36 127L37 116L32 113L27 105L28 100L30 97Z
+M85 81L91 73L95 68L109 67L118 71L129 72L131 75L139 89L146 89L141 98L136 105L136 114L132 122L129 126L124 131L117 132L114 124L111 115L112 107L108 101L108 96L104 95L93 96L88 93L85 87Z
+M140 112L145 114L142 122L139 120Z
+M92 67L92 61L98 61L99 58L96 56L102 54L107 51L108 49L105 46L105 44L113 39L122 36L136 40L141 39L154 38L172 34L190 31L215 35L215 85L190 82L181 80L172 86L169 93L166 84L161 79L156 77L151 77L150 78L153 80L147 86L139 88L131 75L130 73L131 70L132 68L125 67L123 64L121 66L117 62L112 60L114 64L116 64L111 62L107 60L103 61L99 67L95 68Z
+M95 55L101 54L102 52L98 49L95 48L97 51Z
+M91 53L95 53L95 51L91 52Z
+M78 42L87 42L86 41L80 41Z
+M24 81L33 82L32 84L24 83Z
+M4 166L40 160L80 164L120 160L160 164L196 166V200H4Z"/>
+  </g>
+  <circle cx="100" cy="100" r="96" fill="url(#shade)"/>
+  <circle class="colony" cx="19" cy="62" r="1.6"/><circle class="colony" cx="46" cy="109" r="1.6"/>
+  <circle class="colony" cx="113" cy="57" r="1.6"/><circle class="colony" cx="170" cy="80" r="1.6"/>
+  <circle class="colony" cx="118" cy="96" r="1.8"/><circle class="ping" cx="118" cy="96" r="3"/>
+</svg>
+
+<main id="auth">
+  <h1>Xern</h1>
+  <p class="tag">Build your fortune, make allies, and claim the world.</p>
+
+  <div class="panel">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-login" aria-selected="true" aria-controls="form">Log in</button>
+      <button role="tab" id="tab-join" aria-selected="false" aria-controls="form">Join</button>
+    </div>
+
+    <form id="form" novalidate>
+      <div id="userRow">
+        <label for="user">Username</label>
+        <input id="user" autocomplete="username" placeholder="Your commander name">
+      </div>
+
+      <div id="emailRow" hidden>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password" placeholder="At least 8 characters">
+
+      <div id="confirmRow" hidden>
+        <label for="confirm">Confirm password</label>
+        <input id="confirm" type="password" autocomplete="new-password" placeholder="Type it again">
+      </div>
+
+      <p class="msg" id="msg" role="alert"></p>
+      <button class="go" type="submit" id="submit">Log in</button>
+    </form>
+
+
+    <p class="swap" id="swap">New to Xern? <button type="button" id="swapBtn">Join now</button></p>
+  </div>
+</main>
+
+<div id="app" hidden>
+  <header class="bar">
+    <span class="brand">Xern</span>
+    <nav class="nav" id="nav" aria-label="Main">
+      <button data-page="home" aria-current="page">Home</button>
+      <button data-page="market">Market</button>
+      <button data-page="stocks">Stocks</button>
+      <button data-page="casino">Casino</button>
+      <button data-page="team">Team</button>
+      <button data-page="allies">Allies</button>
+      <button data-page="warfare">Warfare</button>
+    </nav>
+    <button class="out" id="logout">Log out</button>
+  </header>
+  <section class="page" id="page-home">
+    <h2 id="hello"></h2>
+    <p class="bal"><strong id="balance">0</strong><span>Xergs</span></p>
+    <div class="gift">
+      <h3>Daily gift</h3>
+      <p class="streak" id="streak">Login streak: 0 days</p>
+      <button class="go" id="giftBtn" disabled>Loading…</button>
+      <p class="giftmsg" id="giftMsg" role="status"></p>
+    </div>
+  </section>
+  <section class="page" id="page-market" hidden><h2>Market</h2><p class="soon">Coming soon.</p></section>
+  <section class="page" id="page-stocks" hidden><h2>Stocks</h2><p class="soon">Coming soon.</p></section>
+  <section class="page" id="page-casino" hidden><h2>Casino</h2><p class="soon">Coming soon.</p></section>
+  <section class="page" id="page-team" hidden><h2>Team</h2><p class="soon">Coming soon.</p></section>
+  <section class="page" id="page-allies" hidden><h2>Allies</h2><p class="soon">Coming soon.</p></section>
+  <section class="page" id="page-warfare" hidden><h2>Warfare</h2><p class="soon">Coming soon.</p></section>
+</div>
+
+<script>
+(function(){
+  var URL_BASE = "https://fjkbmjfnvgnuzpljkwsh.supabase.co";
+  var KEY = "sb_publishable_eyTiYnjqUU2DmdSprZ0fqA_zMSf5a7w";
+  var STORE = "xerg_session";
+
+  var mode = "login";
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $("form"), msg = $("msg"), btn = $("submit");
+
+  function say(text, ok){ msg.className = ok ? "msg ok" : "msg"; msg.textContent = text; }
+  function fail(text, field){ say(text, false); if(field) $(field).focus(); }
+
+  var current = null;
+  function saveSession(s){ current = s; }
+  function loadSession(){ return current; }
+  function clearSession(){ current = null; }
+  try{ localStorage.removeItem(STORE); }catch(e){}
+
+  function headers(token){
+    var h = { "apikey": KEY, "Content-Type": "application/json" };
+    if(token) h["Authorization"] = "Bearer " + token;
+    return h;
+  }
+  async function api(path, method, body, token){
+    var r = await fetch(URL_BASE + path, { method: method, headers: headers(token), body: body ? JSON.stringify(body) : undefined });
+    var data = null;
+    try{ data = await r.json(); }catch(e){}
+    return { ok: r.ok, status: r.status, data: data || {} };
+  }
+  function errText(d){ return (d && (d.msg || d.message || d.error_description || d.error)) || ""; }
+
+  function setMode(m){
+    mode = m;
+    var join = m === "join";
+    $("tab-login").setAttribute("aria-selected", String(!join));
+    $("tab-join").setAttribute("aria-selected", String(join));
+    $("confirmRow").hidden = !join;
+    btn.textContent = join ? "Create account" : "Log in";
+    $("pass").autocomplete = join ? "new-password" : "current-password";
+    $("swap").firstChild.textContent = join ? "Already have an account? " : "New to Xern? ";
+    $("swapBtn").textContent = join ? "Log in" : "Join now";
+    say("", false);
+  }
+
+  async function fetchProfile(session){
+    return api("/rest/v1/profiles?select=username,money", "GET", null, session.access_token);
+  }
+
+  var gift = { endAt: 0, reward: 100, timer: null };
+  function fmt(sec){
+    var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), x = sec % 60;
+    return h + "h " + (m < 10 ? "0" : "") + m + "m " + (x < 10 ? "0" : "") + x + "s";
+  }
+  function setStreak(n){ $("streak").textContent = "Login streak: " + n + (n === 1 ? " day" : " days"); }
+  function giftNote(text, bad){ $("giftMsg").className = bad ? "giftmsg bad" : "giftmsg"; $("giftMsg").textContent = text; }
+  
+  function renderGift(){
+    var left = Math.max(0, Math.ceil((gift.endAt - Date.now()) / 1000));
+    var b = $("giftBtn");
+    if(left > 0){ b.disabled = true; b.textContent = "Next gift in " + fmt(left); }
+    else { b.disabled = false; b.textContent = "Claim 100 Xergs"; }
+  }
+  
+  function startGiftTimer(){ clearInterval(gift.timer); renderGift(); gift.timer = setInterval(renderGift, 1000); }
+  
+  async function loadGift(){
+    var s = loadSession();
+    if(!s || !s.access_token) return;
+    var r = await api("/rest/v1/rpc/gift_status", "POST", {}, s.access_token);
+    if(r.ok && r.data && r.data.ok){
+      gift.endAt = Date.now() + r.data.seconds_left * 1000;
+      gift.reward = 100;
+      setStreak(r.data.streak);
+      startGiftTimer();
+    } else {
+      $("giftBtn").disabled = true; $("giftBtn").textContent = "Gift unavailable";
+    }
+  }
+
+  $("giftBtn").onclick = async function(){
+    var s = loadSession();
+    if(!s || !s.access_token) return;
+    $("giftBtn").disabled = true; giftNote("");
+    try{
+      var r = await api("/rest/v1/rpc/claim_daily_gift", "POST", {}, s.access_token);
+      var d = r.data || {};
+      if(r.ok && d.ok){
+        $("balance").textContent = Number(d.money).toLocaleString();
+        setStreak(d.streak);
+        gift.endAt = Date.now() + (24 * 3600 * 1000);
+        gift.reward = 100;
+        giftNote("+100 Xergs claimed!");
+      } else if(d.error === "too_soon"){
+        gift.endAt = Date.now() + d.seconds_left * 1000;
+        giftNote("Your next gift isn’t ready yet.", true);
+      } else {
+        giftNote("Couldn’t claim the gift. Try again.", true);
+      }
+    }catch(e){
+      giftNote("Couldn’t reach the server. Try again.", true);
+    }
+    startGiftTimer();
+  };
+
+  var PAGES = ["home","market","stocks","casino","team","allies","warfare"];
+  function goPage(p){
+    PAGES.forEach(function(x){ $("page-" + x).hidden = x !== p; });
+    var btns = $("nav").querySelectorAll("button");
+    for(var i = 0; i < btns.length; i++){
+      if(btns[i].getAttribute("data-page") === p) btns[i].setAttribute("aria-current", "page");
+      else btns[i].removeAttribute("aria-current");
+    }
+  }
+  function showApp(name, money){
+    $("auth").hidden = true; $("app").hidden = false;
+    $("hello").textContent = "Hello, " + name;
+    $("balance").textContent = Number(money).toLocaleString();
+    goPage("home");
+    giftNote("");
+    loadGift().catch(function(){});
+    window.scrollTo(0, 0);
+  }
+  $("nav").addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest("button") : null;
+    if(b) goPage(b.getAttribute("data-page"));
+  });
+
+  async function showHome(){
+    var s = loadSession();
+    if(!s || !s.access_token) return false;
+    var p = await fetchProfile(s);
+    if(p.status === 401 && s.refresh_token){
+      var rf = await api("/auth/v1/token?grant_type=refresh_token", "POST", { refresh_token: s.refresh_token });
+      if(!rf.ok || !rf.data.access_token){ clearSession(); return false; }
+      s = { access_token: rf.data.access_token, refresh_token: rf.data.refresh_token };
+      saveSession(s);
+      p = await fetchProfile(s);
+    }
+    if(!p.ok){ clearSession(); return false; }
+    var row = Array.isArray(p.data) ? p.data[0] : null;
+    showApp(row ? row.username : "commander", row ? row.money : 0);
+    return true;
+  }
+
+  $("tab-login").onclick = function(){ setMode("login"); };
+  $("tab-join").onclick = function(){ setMode("join"); };
+  $("swapBtn").onclick = function(){ setMode(mode === "login" ? "join" : "login"); };
+
+  form.addEventListener("submit", async function(e){
+    e.preventDefault();
+    var pass = $("pass").value, user = $("user").value.trim();
+    var email = user.toLowerCase() + "@players.example.com";
+    if(mode === "join"){
+      if(!/^[A-Za-z0-9_]{3,24}$/.test(user)) return fail("Username must be 3 to 24 letters, numbers, or underscores.", "user");
+      if(pass.length < 8) return fail("Use a password with at least 8 characters.", "pass");
+      if(pass !== $("confirm").value) return fail("The passwords don’t match.", "confirm");
+    } else {
+      if(!user) return fail("Enter your username.", "user");
+      if(!pass) return fail("Enter your password.", "pass");
+    }
+    btn.disabled = true; say("Working…", true);
+    try{
+      var res;
+      if(mode === "join"){
+        res = await api("/auth/v1/signup", "POST", { email: email, password: pass, data: { username: user } });
+        if(!res.ok){
+          var t = errText(res.data);
+          return fail(/database error|already/i.test(t) ? "That username is taken. Try another." : (t || "Couldn’t create the account."));
+        }
+        if(!res.data.access_token){
+          return fail("Account created, but Supabase still requires email confirmation. Turn off “Confirm email” in your Supabase settings.");
+        }
+      } else {
+        res = await api("/auth/v1/token?grant_type=password", "POST", { email: email, password: pass });
+        if(!res.ok){
+          return fail(/confirm/i.test(errText(res.data)) ? "Supabase still requires email confirmation. Turn off “Confirm email” in your Supabase settings." : "Username or password is incorrect.");
+        }
+      }
+      saveSession({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
+      say("", false);
+      if(!(await showHome())) fail("Signed in, but your profile couldn’t be loaded. Try again.");
+    } catch(err){
+      fail("Couldn’t reach the server. Check your connection and try again.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $("logout").onclick = async function(){
+    var s = loadSession();
+    if(s && s.access_token){ try{ await api("/auth/v1/logout", "POST", null, s.access_token); }catch(e){} }
+    clearSession();
+    clearInterval(gift.timer);
+    $("app").hidden = true; $("auth").hidden = false;
+    form.reset(); setMode("login");
+  };
+})();
+</script>
+</body>
+</html>
